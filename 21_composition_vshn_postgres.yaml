@@ -23,7 +23,7 @@ spec:
     - name: fnio
       type: Container
       container:
-        image: wejdross/fnio
+        image: ghcr.io/wejdross/fnio
         imagePullPolicy: Always
   resources:
     - name: resource1
@@ -586,7 +586,7 @@ spec:
         spec:
           parameters:
             bucketName: ''
-            region: us-east-1
+            region: ch-gva-2
           writeConnectionSecretToRef:
             name: ''
             namespace: ''
@@ -641,8 +641,8 @@ spec:
                         name: ''
                   bucket: ''
                   enablePathStyleAddressing: true
-                  endpoint: http://minio-server.minio:9000
-                  region: us-east-1
+                  endpoint: https://sos-ch-gva-2.exo.io
+                  region: ch-gva-2
                 type: s3Compatible
           providerConfigRef:
             name: kubernetes

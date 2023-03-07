@@ -1,18 +1,18 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 
 	xfnv1alpha1 "github.com/crossplane/crossplane/apis/apiextensions/fn/io/v1alpha1"
-	pgsqlv1 "github.com/vshn/component-appcat/apis/vshn/v1"
-	"gopkg.in/yaml.v3"
+	"k8s.io/apimachinery/pkg/runtime"
+	"sigs.k8s.io/yaml"
 )
 
 func main() {
+
 	funcIO := xfnv1alpha1.FunctionIO{}
 	//composite := pgsqlv1.VSHNPostgreSQL{}
 	//m := make(map[interface{}]interface{})
@@ -26,33 +26,49 @@ func main() {
 		log.Fatal(err)
 	}
 
-	psql := &pgsqlv1.VSHNPostgreSQL{}
+	object := `
+apiVersion: kubernetes.crossplane.io/v1alpha1
+kind: Object
+metadata:
+  name: testingconfigmaps
+spec:
+  providerConfigRef:
+    name: kubernetes
+  forProvider:
+    manifest:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: url-config
+        namespace: default
+      data:
+        fullURL: "https://google.pl"`
 
-	err = json.Unmarshal(funcIO.Observed.Composite.Resource.Raw, psql)
+	k8sapproved, err := yaml.YAMLToJSON([]byte(object))
 	if err != nil {
-		log.Fatal(err, "FROM JSON.UNMARSHAL")
+		log.Fatal("from k8sapproved", err)
 	}
 
-	b1, _ := yaml.Marshal(funcIO)
-	b2, _ := yaml.Marshal(psql)
+	funcIO.Desired.Composite.Resource.Raw = funcIO.Observed.Composite.Resource.Raw
 
-	// /*
-	// 	main login goes here
-	// 	manipulate m object
+	funcIO.Desired.Resources = append(funcIO.Desired.Resources, xfnv1alpha1.DesiredResource{
+		Name: "examplename",
+		Resource: runtime.RawExtension{
+			Raw: k8sapproved,
+		},
+	},
+	)
+
 	funcIO.Results = append(funcIO.Results,
 		xfnv1alpha1.Result{
-			Severity: xfnv1alpha1.SeverityWarning,
-			Message:  string(b1),
+			Severity: xfnv1alpha1.SeverityNormal,
+			Message:  fmt.Sprintf("\n\n\n%s\n\n\n", string(x)),
 		},
 	)
-	// */
-
-	funcIO.Desired.Composite.Resource.Raw = b2
 
 	d1, err := yaml.Marshal(funcIO)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	fmt.Println(string(d1))
 }

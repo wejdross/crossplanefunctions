@@ -1,52 +1,10 @@
-# apiVersion: v1
-# kind: Namespace
-# metadata:
-#   name: widera-testing
-#   labels:
-#     name: widera-testing
-# ---
 apiVersion: vshn.appcat.vshn.io/v1
 kind: VSHNPostgreSQL
 metadata:
-  name: my-postgres-example
-  # namespace: widera-testing
+  name: pgsql-app1-prod 
 spec:
   parameters:
     service:
-      majorVersion: "15"
-    backup:
-      schedule: '* * * * *'
+      majorVersion: "15" 
   writeConnectionSecretToRef:
-    name: postgres-creds-connection
-      #---
-      #apiVersion: v1
-      #kind: Pod
-      #metadata:
-      #  name: postgres-client
-      #  namespace: widera-testing
-      #spec:
-      #  containers:
-      #  - name: postgres
-      #    image: postgres:15
-      #    resources:
-      #      limits:
-      #        memory: "128Mi"
-      #        cpu: "500m"
-      #    command:
-      #      - /bin/sh
-      #      - -c
-      #    args:
-      #      - PGPASSWORD=$POSTGRESQL_PASSWORD psql "sslmode=verify-ca sslrootcert=/etc/secret-volume/ca.crt host=$POSTGRESQL_HOST port=$POSTGRESQL_PORT dbname=$POSTGRESQL_DB" -U $POSTGRESQL_USER -l
-      #    envFrom:
-      #      - secretRef:
-      #          name: postgres-creds-connection
-      #    volumeMounts:
-      #    - name: secret-volume
-      #      readOnly: true
-      #      mountPath: "/etc/secret-volume"
-      #  volumes:
-      #  - name: secret-volume
-      #    secret:
-      #      defaultMode: 0600
-      #      secretName: postgres-creds-connection
-      #  restartPolicy: OnFailure
+    name: postgres-creds 

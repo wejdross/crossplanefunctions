@@ -1,7 +1,7 @@
 dockerhub:
 	docker build -t fnio -f Dockerfile .
-	docker tag fnio wejdross/fnio
-	docker push wejdross/fnio
+	docker tag fnio ghcr.io/wejdross/fnio
+	docker push ghcr.io/wejdross/fnio
 
 reload:
 	kubectl delete -f claim.yaml
